@@ -1,6 +1,5 @@
-use std::ops;
-
 use rand::{rngs::ThreadRng, Rng};
+use std::ops;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vec3 {

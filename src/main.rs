@@ -14,8 +14,8 @@ mod vec3;
 
 fn main() -> std::io::Result<()> {
     let cam = Camera::new();
-    let samples_per_pixel = 16;
-    let max_depht = 16;
+    let samples_per_pixel = 128;
+    let max_depht = 50;
 
     let mat_ground = Lambertian::new(Color::new(0.8, 0.8, 0.0));
     let mat_center = Lambertian::new(Color::new(0.8, 0.0, 0.8));

@@ -81,7 +81,9 @@ impl Dielectric {
         let cos_theta = (-direction_norm).dot(rec.normal).min(1.0);
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
-        if refraction_ratio * sin_theta > 1.0 {
+        let cannot_refract = refraction_ratio * sin_theta > 1.0;
+
+        if cannot_refract {
             let reflect = direction_norm.reflect(rec.normal);
             (Color::ones(), Ray::new(rec.p, reflect))
         } else {
