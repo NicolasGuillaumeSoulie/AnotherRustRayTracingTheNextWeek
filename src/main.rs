@@ -20,7 +20,7 @@ fn main() -> std::io::Result<()> {
     let mat_ground = Lambertian::new(Color::new(0.8, 0.8, 0.0));
     let mat_center = Lambertian::new(Color::new(0.8, 0.0, 0.8));
     let mat_lecft = Dielectric::new(1.5);
-    let mat_right = Metal::new(Color::new(0.8, 0.6, 0.2), 1.0);
+    let mat_right = Metal::new(Color::new(0.8, 0.6, 0.2), 0.1);
 
     let mut world = HittableList::new();
     world.add(Box::new(Sphere::new(

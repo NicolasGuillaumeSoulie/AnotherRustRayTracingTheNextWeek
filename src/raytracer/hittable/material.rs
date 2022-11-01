@@ -3,7 +3,7 @@ use crate::{
     raytracer::Ray,
     vec3::{Color, Vec3},
 };
-use rand::rngs::ThreadRng;
+use rand::{rngs::ThreadRng, Rng};
 
 #[derive(Debug, Copy, Clone)]
 pub enum Material {
@@ -18,7 +18,7 @@ impl Material {
         match self {
             Material::Lambertian(l) => l.scatter(rec, rng),
             Material::Metal(m) => m.scatter(r_in, rec, rng),
-            Material::Dielectric(d) => d.scatter(r_in, rec),
+            Material::Dielectric(d) => d.scatter(r_in, rec, rng),
             _ => (Color::zeros(), Ray::new(Vec3::zeros(), Vec3::zeros())),
         }
     }
@@ -71,7 +71,7 @@ impl Dielectric {
     pub fn new(ir: f64) -> Material {
         Material::Dielectric(Dielectric { ir })
     }
-    fn scatter(&self, r_in: &Ray, rec: &mut HitRecord) -> (Vec3, Ray) {
+    fn scatter(&self, r_in: &Ray, rec: &mut HitRecord, rng: &mut ThreadRng) -> (Vec3, Ray) {
         let refraction_ratio = if rec.front_face {
             1.0 / self.ir
         } else {
@@ -83,12 +83,20 @@ impl Dielectric {
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
 
-        if cannot_refract {
+        if cannot_refract
+            || Self::reflectance(cos_theta, refraction_ratio) > rng.gen_range(0.0..1.0)
+        {
             let reflect = direction_norm.reflect(rec.normal);
             (Color::ones(), Ray::new(rec.p, reflect))
         } else {
             let refracted = direction_norm.refract(rec.normal, refraction_ratio);
             (Color::ones(), Ray::new(rec.p, refracted))
         }
+    }
+    fn reflectance(cosine: f64, refraction_ratio: f64) -> f64 {
+        // Schlick's approximation
+        let r0 = (1.0 - refraction_ratio) / (1.0 + refraction_ratio);
+        let r0 = r0 * r0;
+        r0 + (1.0 - r0) * (1.0 - cosine).powi(5)
     }
 }
