@@ -1,7 +1,8 @@
 use raytracer::Camera;
 use std::env;
-use std::{fs::File, sync::Arc};
+use std::f64::consts::PI;
 use std::io::prelude::*;
+use std::{fs::File, sync::Arc};
 
 use crate::{
     raytracer::{
@@ -15,7 +16,7 @@ mod vec3;
 
 fn main() -> std::io::Result<()> {
     env::set_var("RUST_BACKTRACE", "1");
-    let cam = Camera::new(16./9., 1080, 1.0);
+    let cam = Camera::new(16. / 9., 405, 90., 1.0);
     let samples_per_pixel = 128;
     let max_depht = 50;
 

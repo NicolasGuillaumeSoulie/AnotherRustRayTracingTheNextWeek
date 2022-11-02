@@ -1,9 +1,9 @@
-use std::sync::{Arc, Mutex};
 use super::ray::Ray;
 use crate::raytracer::Hittable;
 use crate::vec3::{Color, Point3, Vec3};
 use rand::{thread_rng, Rng};
 use rayon::prelude::*;
+use std::sync::{Arc, Mutex};
 
 pub struct Camera {
     img_width: u32,
@@ -16,10 +16,11 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(img_aspect_ratio: f64, img_height: u32, focal_len: f64) -> Self {
+    pub fn new(img_aspect_ratio: f64, img_height: u32, vfov: f64, focal_len: f64) -> Self {
         let img_width: u32 = ((img_height as f64) * img_aspect_ratio) as u32;
 
-        let vp_height = 2.0;
+        let h = (0.5 * vfov.to_radians()).tan();
+        let vp_height = h * 2.0;
         let vp_width = img_aspect_ratio * vp_height;
 
         let origin = Vec3::zeros();
