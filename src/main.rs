@@ -15,13 +15,19 @@ mod vec3;
 
 fn main() -> std::io::Result<()> {
     env::set_var("RUST_BACKTRACE", "1");
+    let lookfrom = Point3::new(-2., 2., 1.);
+    let lookat = Point3::new(0., 0., -1.);
+    let dist_to_focus = (lookfrom - lookat).length();
+
     let cam = Camera::new(
-        Point3::new(-2., 2., 1.),
-        Point3::new(0., 0., -1.),
+        lookfrom,
+        lookat,
         Vec3::up(),
         16. / 9.,
         405,
         20.,
+        0.5,
+        dist_to_focus,
     );
     let samples_per_pixel = 128;
     let max_depht = 50;

@@ -92,6 +92,18 @@ impl Vec3 {
     pub fn rand_unit(rng: &mut ThreadRng) -> Vec3 {
         Self::rand_in_sphere(rng).normalize()
     }
+    pub fn rand_in_disk(rng: &mut ThreadRng) -> Vec3 {
+        loop {
+            let p = Vec3 {
+                x: rng.gen_range(-1.0..1.0),
+                y: rng.gen_range(-1.0..1.0),
+                z: 0.0,
+            };
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
 }
 // vec3 . float operations
 impl ops::Mul<f64> for Vec3 {

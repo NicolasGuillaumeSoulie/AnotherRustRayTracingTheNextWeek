@@ -1,6 +1,7 @@
 use super::ray::Ray;
 use crate::raytracer::Hittable;
 use crate::vec3::{Color, Point3, Vec3};
+use rand::rngs::ThreadRng;
 use rand::{thread_rng, Rng};
 use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
@@ -13,6 +14,10 @@ pub struct Camera {
     horizontal: Vec3,
     vertical: Vec3,
     lower_left_corner: Point3,
+    u: Vec3,
+    v: Vec3,
+    w: Vec3,
+    lens_radius: f64,
 }
 
 impl Camera {
@@ -23,6 +28,8 @@ impl Camera {
         img_aspect_ratio: f64,
         img_height: u32,
         vfov: f64,
+        aperture: f64,
+        focus_distance: f64,
     ) -> Self {
         let img_width: u32 = ((img_height as f64) * img_aspect_ratio) as u32;
 
@@ -35,9 +42,11 @@ impl Camera {
         let v = w.cross(u);
 
         let origin = lookfrom;
-        let horizontal = vp_width * u;
-        let vertical = vp_height * v;
-        let lower_left_corner = origin - horizontal / 2. - vertical / 2. - w;
+        let horizontal = focus_distance * vp_width * u;
+        let vertical = focus_distance * vp_height * v;
+        let lower_left_corner = origin - horizontal / 2. - vertical / 2. - focus_distance * w;
+
+        let lens_radius = 0.5 * aperture;
 
         Camera {
             img_width,
@@ -46,12 +55,19 @@ impl Camera {
             horizontal,
             vertical,
             lower_left_corner,
+            u,
+            v,
+            w,
+            lens_radius,
         }
     }
-    pub fn get_ray(&self, u: f64, v: f64) -> Ray {
+    pub fn get_ray(&self, u: f64, v: f64, rng: &mut ThreadRng) -> Ray {
+        let rd = self.lens_radius * Vec3::rand_in_disk(rng);
+        let offset = self.u * rd.x + self.v * rd.y;
+
         Ray::new(
-            self.origin,
-            self.lower_left_corner + u * self.horizontal + v * self.vertical - self.origin,
+            self.origin + offset,
+            self.lower_left_corner + u * self.horizontal + v * self.vertical - self.origin - offset,
         )
     }
     pub fn render(
@@ -95,7 +111,7 @@ impl Camera {
                         let u = (i as f64 + rng.gen_range(0.0..1.0)) / (self.img_width - 1) as f64;
                         let v = (j as f64 + rng.gen_range(0.0..1.0)) / (self.img_height - 1) as f64;
 
-                        let r = self.get_ray(u, v);
+                        let r = self.get_ray(u, v, rng);
                         pixel_color += r.color(&mut rng, za_warudo, max_depht);
                     }
 
