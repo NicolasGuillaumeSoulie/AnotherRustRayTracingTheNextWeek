@@ -4,6 +4,7 @@ use crate::raytracer::Ray;
 use crate::vec3::{Point3, Vec3};
 use material::Material;
 pub use sphere::Sphere;
+use std::sync::Arc;
 use std::vec::Vec;
 
 pub trait Hittable {
@@ -40,7 +41,7 @@ impl HitRecord {
 }
 
 pub struct HittableList {
-    pub objects: Vec<Box<dyn Hittable>>,
+    pub objects: Vec<Arc<dyn Hittable + Send + Sync>>,
 }
 
 impl HittableList {
@@ -52,7 +53,7 @@ impl HittableList {
     // pub fn clear(&mut self) {
     //     self.objects.clear();
     // }
-    pub fn add(&mut self, object: Box<dyn Hittable>) {
+    pub fn add(&mut self, object: Arc<dyn Hittable + Send + Sync>) {
         self.objects.push(object);
     }
 }

@@ -1,11 +1,13 @@
+use std::sync::{Arc, Mutex};
 use super::ray::Ray;
 use crate::raytracer::Hittable;
 use crate::vec3::{Color, Point3, Vec3};
-use rand::Rng;
+use rand::{thread_rng, Rng};
+use rayon::prelude::*;
 
 pub struct Camera {
-    img_width: u16,
-    img_height: u16,
+    img_width: u32,
+    img_height: u32,
 
     origin: Point3,
     horizontal: Vec3,
@@ -14,14 +16,11 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new() -> Self {
-        let img_aspect_ratio = 16.0 / 9.0;
-        let img_width: u16 = 720;
-        let img_height: u16 = (img_width * 9) / 16;
+    pub fn new(img_aspect_ratio: f64, img_height: u32, focal_len: f64) -> Self {
+        let img_width: u32 = ((img_height as f64) * img_aspect_ratio) as u32;
 
         let vp_height = 2.0;
         let vp_width = img_aspect_ratio * vp_height;
-        let focal_len = 1.0;
 
         let origin = Vec3::zeros();
         let horizontal = Vec3::new(vp_width, 0., 0.);
@@ -46,30 +45,67 @@ impl Camera {
     }
     pub fn render(
         &self,
-        za_warudo: &dyn Hittable,
+        za_warudo: &(dyn Hittable + Sync),
         samples_per_pixel: u16,
         max_depht: u16,
     ) -> String {
         let mut render = Vec::new();
         render.push(format!("P3\n{} {}\n255", self.img_width, self.img_height));
 
-        let mut rng = rand::thread_rng();
+        // let mut rng = rand::thread_rng();
 
-        for j in (0..self.img_height).rev() {
-            for i in 0..self.img_width {
-                print!("\rScanlines remaining: {} ", j);
-                let mut pixel_color = Color::zeros();
-                for _ in 0..samples_per_pixel {
-                    let u = (i as f64 + rng.gen_range(0.0..1.0)) / (self.img_width - 1) as f64;
-                    let v = (j as f64 + rng.gen_range(0.0..1.0)) / (self.img_height - 1) as f64;
+        // for j in (0..self.img_height).rev() {
+        //     for i in 0..self.img_width {
+        //         print!("\rScanlines remaining: {} ", j);
+        //         let mut pixel_color = Color::zeros();
+        //         for _ in 0..samples_per_pixel {
+        //             let u = (i as f64 + rng.gen_range(0.0..1.0)) / (self.img_width - 1) as f64;
+        //             let v = (j as f64 + rng.gen_range(0.0..1.0)) / (self.img_height - 1) as f64;
 
-                    let r = self.get_ray(u, v);
-                    pixel_color += r.color(&mut rng, za_warudo, max_depht);
-                }
+        //             let r = self.get_ray(u, v);
+        //             pixel_color += r.color(&mut rng, za_warudo, max_depht);
+        //         }
 
-                render.push(pixel_color.write(samples_per_pixel));
-            }
-        }
+        //         render.push(pixel_color.write(samples_per_pixel));
+        //     }
+        // }
+        // render.join("\n")
+        let done = Arc::new(Mutex::new(0_u32));
+
+        let image: String = (0..self.img_width * self.img_height)
+            .into_par_iter()
+            .map_init(
+                || thread_rng(),
+                |mut rng, screen_pos| {
+                    let mut pixel_color = Color::zeros();
+                    let i = screen_pos % self.img_width;
+                    let j = self.img_height - 1 - screen_pos / self.img_width;
+                    for _ in 0..samples_per_pixel {
+                        let u = (i as f64 + rng.gen_range(0.0..1.0)) / (self.img_width - 1) as f64;
+                        let v = (j as f64 + rng.gen_range(0.0..1.0)) / (self.img_height - 1) as f64;
+
+                        let r = self.get_ray(u, v);
+                        pixel_color += r.color(&mut rng, za_warudo, max_depht);
+                    }
+
+                    {
+                        // Display progress
+                        let mut lock = done.lock().unwrap();
+                        *lock += 1;
+                        print!(
+                            "\rPixels remaining: {:>10}/{:<10} = {:>6.2}%",
+                            *lock,
+                            self.img_width * self.img_height,
+                            (*lock as f64 / (self.img_width * self.img_height) as f64) * 100.0
+                        );
+                    }
+
+                    pixel_color.write(samples_per_pixel) + "\n"
+                },
+            )
+            .collect::<String>();
+
+        render.push(image);
         render.join("\n")
     }
 }

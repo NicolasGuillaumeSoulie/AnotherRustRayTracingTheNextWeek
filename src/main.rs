@@ -1,5 +1,6 @@
 use raytracer::Camera;
-use std::fs::File;
+use std::env;
+use std::{fs::File, sync::Arc};
 use std::io::prelude::*;
 
 use crate::{
@@ -13,7 +14,8 @@ mod raytracer;
 mod vec3;
 
 fn main() -> std::io::Result<()> {
-    let cam = Camera::new();
+    env::set_var("RUST_BACKTRACE", "1");
+    let cam = Camera::new(16./9., 1080, 1.0);
     let samples_per_pixel = 128;
     let max_depht = 50;
 
@@ -23,29 +25,30 @@ fn main() -> std::io::Result<()> {
     let mat_right = Metal::new(Color::new(0.8, 0.6, 0.2), 0.1);
 
     let mut world = HittableList::new();
-    world.add(Box::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point3::new(0., 0., -1.),
         0.5,
         mat_center,
     )));
-    world.add(Box::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point3::new(0., -100.5, -1.),
         100.,
         mat_ground,
     )));
-    world.add(Box::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point3::new(-1., 0.0, -1.),
         0.5,
         mat_lecft,
     )));
-    world.add(Box::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point3::new(1., 0., -1.),
         0.5,
         mat_right,
     )));
 
     let mut file = File::create("img.ppm")?;
-    file.write_all(cam.render(&world, samples_per_pixel, max_depht).as_bytes())?;
-    print!("\r### Rendering Done!! ###              ");
+    let content = cam.render(&world, samples_per_pixel, max_depht);
+    file.write_all(content.as_bytes())?;
+    print!("\n### Rendering Done!! ###              ");
     Ok(())
 }
