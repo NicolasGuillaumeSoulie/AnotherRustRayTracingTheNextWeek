@@ -66,6 +66,13 @@ impl Vec3 {
             z: 1.,
         }
     }
+    pub fn up() -> Vec3 {
+        Vec3 {
+            x: 0.,
+            y: 1.,
+            z: 0.,
+        }
+    }
     // Vec3 rng generation
     pub fn rand(rng: &mut ThreadRng, min: f64, max: f64) -> Vec3 {
         Vec3 {

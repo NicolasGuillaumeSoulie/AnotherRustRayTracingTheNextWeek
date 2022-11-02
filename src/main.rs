@@ -1,6 +1,5 @@
 use raytracer::Camera;
 use std::env;
-use std::f64::consts::PI;
 use std::io::prelude::*;
 use std::{fs::File, sync::Arc};
 
@@ -9,14 +8,21 @@ use crate::{
         hittable::material::{Dielectric, Lambertian, Metal},
         HittableList, Sphere,
     },
-    vec3::{Color, Point3},
+    vec3::{Color, Point3, Vec3},
 };
 mod raytracer;
 mod vec3;
 
 fn main() -> std::io::Result<()> {
     env::set_var("RUST_BACKTRACE", "1");
-    let cam = Camera::new(16. / 9., 405, 90., 1.0);
+    let cam = Camera::new(
+        Point3::new(-2., 2., 1.),
+        Point3::new(0., 0., -1.),
+        Vec3::up(),
+        16. / 9.,
+        405,
+        20.,
+    );
     let samples_per_pixel = 128;
     let max_depht = 50;
 
