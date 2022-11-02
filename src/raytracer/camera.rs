@@ -93,7 +93,7 @@ impl Camera {
                         let mut lock = done.lock().unwrap();
                         *lock += 1;
                         print!(
-                            "\rPixels remaining: {:>10}/{:<10} = {:>6.2}%",
+                            "\rPixels done: {:>10}/{:<10} = {:>6.2}%",
                             *lock,
                             self.img_width * self.img_height,
                             (*lock as f64 / (self.img_width * self.img_height) as f64) * 100.0
