@@ -177,11 +177,11 @@ The diffuse [material implementation](./src/raytracer/hittable/material.rs) was 
 
 ### Metal implementation
 
-Implementing a metalic [material](./src/raytracer/hittable/material.rs) was uneventfull. I already explained my abstraction of [materials](./src/raytracer/hittable/material.rs) previously so all I can give you are pretty visuals:
+Implementing a metallic [material](./src/raytracer/hittable/material.rs) was uneventful. I already explained my abstraction of [materials](./src/raytracer/hittable/material.rs) previously so all I can give you are pretty visuals:
 
 |![Metalic spheres](./renders/08_material_metal_s128d50.png)|![Metalic and fuzzy spheres](./renders/09_fuzzy_reflection_s128d50.png)|
 |:--:|:--:|
-|Metalic reflection|Fuzzy reflection|
+|Metallic reflection|Fuzzy reflection|
 
 ### Dielectric implementation
 
