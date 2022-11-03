@@ -7,7 +7,7 @@
 This is my journey to learn ray tracing following [Peter Shirley](https://github.com/petershirley)'s first book on the subject. 
 In this readme, I will try to explain how it went, both as a reminder for myself and a help for those who choose to follow the same course in Rust.
 
-## Ressources
+## Resources
 
 As I said, this is my implementation of [Peter Shirley](https://github.com/petershirley)'s guide to ray tracing. So of course I followed his book, but I also relied on previous Rust implementations:
 
@@ -72,7 +72,7 @@ The thing is, there are many operators to override if you want a complete covera
 
 > The "Hello world" background rendering showcased a different color as well as some weird round effects on the center of the picture. I could fix the artefact at the center by not normalizing (to unit vector) the raycast, but I didn't investigate the discoloration further. 
 >
->That was dumb. Always question why your code does not give you the same result.
+>That was dumb. Always question why your code does not give you the expected result.
 
 I only caught the real issue when I tried to display the first sphere as it resulted in weird abstract pieces :
 
@@ -80,21 +80,79 @@ I only caught the real issue when I tried to display the first sphere as it resu
 |:--:|
 | *"Ceci n'est pas une sphère - Or how to fail your ray tracer"<br>Nicolas Guillaume Soulié* |
 
-After some time, I manage to find the mistake using [unit tests](https://doc.rust-lang.org/book/ch11-01-writing-tests.html). So I do advise you to use [unit tests](https://doc.rust-lang.org/book/ch11-01-writing-tests.html) and/or [TDD (Test Driven Development)](https://en.wikipedia.org/wiki/Test-driven_development#Test-driven_development_cycle) for straight forward yet important part of your code like Vec3. 
+After some time, I managed to find the mistake using [unit tests](https://doc.rust-lang.org/book/ch11-01-writing-tests.html). So I do advise you to use [unit tests](https://doc.rust-lang.org/book/ch11-01-writing-tests.html) and/or [TDD (Test Driven Development)](https://en.wikipedia.org/wiki/Test-driven_development#Test-driven_development_cycle) for straight forward yet important part of your code like Vec3. 
 
 > I have initially written my own tests for dot and cross products. However, I didn't expect typos on simpler operations. To debug faster I "stole" [Nelarius' unit tests](https://github.com/Nelarius/weekend-raytracer-rust/blob/master/src/vec3.rs). However, one mistake did manage to pass all the tests. I caught it when I started to deal with multi-sampling anti-aliasing as it whitened the image based on the number of rays.
 
-||
-|:--:|
-||
-
 ## Hittable abstraction with Traits
+
+In Rust there is no inheritance. Instead the language uses [Traits implementations](https://doc.rust-lang.org/book/ch10-02-traits.html). 
+
+>"Traits are similar to a feature often called interfaces in other languages, although with some differences."
+>
+>[The Rust "book", *Traits: Defining Shared Behavior*](https://doc.rust-lang.org/book/ch10-02-traits.html)
+
+To abstract [Hittables](./src/raytracer/hittable.rs) in Rust, [traits](https://doc.rust-lang.org/book/ch10-02-traits.html) seem like the implementation closest to a parent class in C++. You have to use the [dyn](https://doc.rust-lang.org/rust-by-example/trait/dyn.html?highlight=dyn#returning-traits-with-dyn) keyword to explicit that you use dynamic types and wrap the Hittables structs in your list in smart pointers (like [Box](https://doc.rust-lang.org/book/ch15-01-box.html?highlight=box#enabling-recursive-types-with-boxes) or [Arc](https://doc.rust-lang.org/book/ch16-03-shared-state.html?highlight=arc#atomic-reference-counting-with-arct)).
+
+```Rust
+// Dyn type in smart pointer for list (Vec)
+pub struct HittableList {
+    pub objects: Vec<Arc<dyn Hittable>>,
+}
+// Dyn type used in functions/methods prototypes
+pub fn render(world: &(dyn Hittable), samples: u16, max_depht: u16 ) -> String;
+```
+
+>In functions, we can only pass [references](https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html?highlight=references#references-and-borrowing) to a dynamic type. To quote the Rust compiler:
+>
+>*"Function arguments must have a statically known size, borrowed types always have a known size: `&`"*
+
+Another possible implementation would be to use Rust [enums](https://doc.rust-lang.org/book/ch06-01-defining-an-enum.html) as a type wrapper. However, in my opinion, this implementation would make the addition of new hittable classes more tedious so I chose against it. I still used this approach with [materials](./src/raytracer/hittable/material.rs) if you are interested.
+
+## Utilities for Rust
+
+Multiple of the constants and utility functions needed in the [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html#surfacenormalsandmultipleobjects/commonconstantsandutilityfunctions) are already available in Rust. You just need to import some of them.
+
+### Common Constants & Utility Functions
+
+```Rust
+// Maximum float (f64 in my case)
+f64::INFINITY
+
+// PI (not needed)
+std::f64::consts::PI
+
+// Degree to radians
+let degree: f64 = 90.0;
+let radian: f64 = degree.to_radians();
+```
+
+### Some Random Number Utilities
+
+```Rust
+// Import 
+use rand::{thread_rng, Rng};
+
+// Get a reference to the thread-local generator
+let mut rng: ThreadRng = thread_rng();
+
+// Generate a number in range
+let random_number = rng.gen_range(min..max);
+```
 
 ## Materials through enums
 
 ### Refraction Vector Formulas Demonstration
 
 ### The refraction bug
+
+
+
+|![Refracting material show up as black](./renders/10_refraction_fail_s16d16.png)|
+|:--:|
+| Where is my refraction?|
+
+
 
 ## Multi-Threading with Rayon
 
