@@ -84,6 +84,10 @@ After some time, I managed to find the mistake using [unit tests](https://doc.ru
 
 > I have initially written my own tests for dot and cross products. However, I didn't expect typos on simpler operations. To debug faster I "stole" [Nelarius' unit tests](https://github.com/Nelarius/weekend-raytracer-rust/blob/master/src/vec3.rs). However, one mistake did manage to pass all the tests. I caught it when I started to deal with multi-sampling anti-aliasing as it whitened the image based on the number of rays.
 
+|![Normals](./renders/01_normals.png)|
+|:--:|
+|Normals after correction|
+
 ## Hittable abstraction with Traits
 
 In Rust there is no inheritance. Instead the language uses [Traits implementations](https://doc.rust-lang.org/book/ch10-02-traits.html). 
@@ -142,9 +146,48 @@ let random_number = rng.gen_range(min..max);
 
 ## Materials through enums
 
-### Refraction Vector Formulas Demonstration
+For the materials implementation, I chose to rely on an [enum](https://doc.rust-lang.org/book/ch06-01-defining-an-enum.html) wrapper. The scatter method of the [enum](https://doc.rust-lang.org/book/ch06-01-defining-an-enum.html) use a [match control flow](https://doc.rust-lang.org/book/ch06-02-match.html) to call the scatter method of the wrapped material type.
 
-### The refraction bug
+```Rust
+pub enum Material {
+    Lambertian(Lambertian),
+    // ...
+}
+
+impl Material {
+    pub fn scatter(&self, r_in: &Ray, rec: &mut HitRecord, rng: &mut ThreadRng) ->  (Vec3, Ray) {
+        match self {
+            Material::Lambertian(l) => l.scatter(rec, rng),
+            // ...
+        }
+    }
+}
+```
+### Diffuse implementation
+
+The diffuse [material implementation](./src/raytracer/hittable/material.rs) was relatively without issue. At first my results were very dark compared to the [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html#diffusematerials/limitingthenumberofchildrays), but I couldn't find why. After the shadow acne fix I obtained closer results.
+
+|![Diffuse spheres](./renders/03_diffuse_s128d50.png)| ![Gamma correction](./renders/04_gamma_s128d16.png)|![Shadow acne fix](./renders/05_shadowAcne_s128d16.png)|
+|:---:|:---:|:---:|
+|Diffuse|Gamma correction|Shadow acne fix|
+
+|![Lamebertian diffuse spheres](./renders/06_lambertian_s128d16.png)|![Colored lamebertian diffuse spheres](./renders/07_material_lambertian_s128d16.png)|
+|:--:|:--:|
+|Lambertian diffuse|Colored lambertian diffuse|
+
+### Metal implementation
+
+Implementing a metalic [material](./src/raytracer/hittable/material.rs) was uneventfull. I already explained my abstraction of [materials](./src/raytracer/hittable/material.rs) previously so all I can give you are pretty visuals:
+
+|![Metalic spheres](./renders/08_material_metal_s128d50.png)|![Metalic and fuzzy spheres](./renders/09_fuzzy_reflection_s128d50.png)|
+|:--:|:--:|
+|Metalic reflection|Fuzzy reflection|
+
+### Dielectric implementation
+
+#### Refraction Vector Formulas Demonstration
+
+#### The refraction bug
 
 
 
