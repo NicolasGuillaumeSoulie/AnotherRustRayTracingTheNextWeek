@@ -5,7 +5,7 @@
 | *Final Render* |
 
 This is my journey to learn ray tracing following [Peter Shirley](https://github.com/petershirley)'s first book on the subject. 
-In this readme, I will try to explain how it went, both as a reminder for myself and a help for those who choose to follow the same course in Rust.
+In this readme, I will try to explain how it went, both as a reminder for myself and a help for those who choose to follow the same course in Rust. Well, I am doing this mostly for myself, but explaining what you're doing is a good way of ensuring you understand your subject.
 
 ## Resources
 
@@ -187,6 +187,61 @@ Implementing a metallic [material](./src/raytracer/hittable/material.rs) was une
 
 #### Refraction Vector Formulas Demonstration
 
+The [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html#dielectrics/snell'slaw) gives us formulas for computing $R$ without telling us how it works. Here I will try to demonstrate why they work.
+
+We want to demonstrate: 
+
+>$$R^′_{⊥}=\frac{η}{η′}⋅(R+cosθn)$$
+>$$R^′_{∥}=−\sqrt{1−|R^′_{⊥}|^2}N$$
+
+|![Refracting material show up as black](./doc/refraction_graph.png)|
+|:--:|
+| Refraction|
+
+We have $N$, $T$, $R$ and $R^′$ of unit length, with $T$ perpendicular to $N$. We also know that:
+
+>$$R = R_{⊥}+R_{∥}$$
+>$$R^′=R^′_{⊥}+R^′_{∥}$$
+
+>$$sinθ^′=\frac{η}{η′}⋅sinθ$$
+
+With $_{⊥}$ and $_{∥}$ respectively indicating the vector is perpendicular/parallel to $N$ :
+
+>$$
+>\begin{cases}
+>R_{⊥} = Tsinθ\\
+>R_{∥} = -Ncosθ\\
+>\end{cases}
+>\begin{cases}
+>R^′_{⊥} = Tsinθ^′\\
+>R^′_{∥} = -Ncosθ^′\\
+>\end{cases}
+>$$
+
+Therefor we can define $R^′_{⊥}$ based on $R_{⊥}$:
+
+>$$R^′_{⊥} = Tsinθ^′$$
+>$$R^′_{⊥} = \frac{η}{η′}⋅Tsinθ$$
+>$$R^′_{⊥} = \frac{η}{η′}⋅R_{⊥}$$
+
+And since:
+>$$R_{⊥} = R - R_{∥}$$
+>$$R_{⊥} = R + Ncosθ$$
+
+We have: 
+
+>$$R^′_{⊥} = \frac{η}{η′}⋅(R + Ncosθ)$$
+
+Next we can express $R^′_{∥}$ using $R^′_{⊥}$ thanks to trygonometry $(cos^2θ + sin^2θ = 1)$:
+
+>$$R^′_{∥} = -Ncosθ^′$$
+>$$R^′_{∥} = -N⋅\sqrt{cos^2θ^′}$$
+>$$R^′_{∥} = -N⋅\sqrt{(1 - sin^2θ^′)}$$
+
+Because $|R^′_{⊥}| = |T|sinθ^′ = sinθ^′$ since $T$ is of unit length:
+
+>$$R^′_{∥} = -N\sqrt{1 -|R^′_{⊥}|^2}$$
+
 #### The refraction bug
 
 
@@ -199,4 +254,8 @@ Implementing a metallic [material](./src/raytracer/hittable/material.rs) was une
 
 ## Multi-Threading with Rayon
 
-## 
+## Fov distortion
+
+## Final render
+
+## Closing thoughts
