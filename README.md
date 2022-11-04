@@ -260,7 +260,7 @@ Dielectric too should be rather simple to implement by following the [book](). A
 |:--:|
 | Where is refraction?|
 
-I spend hours checking my code. I followed the debugger step by step, surveilling how and where rays were cast, visualising them with a pen and paper, to understand what was happening.
+I spent hours checking my code. I followed the debugger step by step, surveilling how and where the rays were cast, visualising them with a pen and paper, to understand what was happening.
 
 >If you are unfamiliar with [breakpoints](https://en.wikipedia.org/wiki/Breakpoint), they allow you to pause execution of a program at a chosen instruction. Then you can check the [stack trace](https://en.wikipedia.org/wiki/Stack_trace) as well as variable values. 
 >
