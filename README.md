@@ -207,7 +207,7 @@ $$R^′=R^′_{⊥}+R^′_{∥}$$
 
 $$sinθ^′=\frac{η}{η′}⋅sinθ$$
 
-With $_{⊥}$ and $_{∥}$ respectively indicating the vector is perpendicular/parallel to $N$ :
+With ${_{⊥}}$ and ${_{∥}}$ respectively indicating the vector is perpendicular/parallel to $N$ :
 
 $$
 \begin{cases}
@@ -220,7 +220,7 @@ R^′_{∥} = -Ncosθ^′\\
 \end{cases}
 $$
 
-Therefor we can define $R^′_{⊥}$ based on $R_{⊥}$:
+Therefor we can define ${R^′_{⊥}}$ based on ${R_{⊥}}$:
 
 $$R^′_{⊥} = Tsinθ^′$$
 
@@ -238,7 +238,7 @@ We have:
 
 >$$R^′_{⊥} = \frac{η}{η′}⋅(R + Ncosθ)$$
 
-Next we can express $R^′_{∥}$ using $R^′_{⊥}$ thanks to trygonometry $(cos^2θ + sin^2θ = 1)$:
+Next we can express ${R^′_{∥}}$ using ${R^′_{⊥}}$ thanks to trygonometry $(cos^2θ + sin^2θ = 1)$:
 
 $$R^′_{∥} = -Ncosθ^′$$
 
