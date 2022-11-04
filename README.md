@@ -260,17 +260,17 @@ Dielectric too should be rather simple to implement by following the [book](). A
 |:--:|
 | Where is refraction?|
 
-I spend hours checking my code. I followed the debugger step by step, surveilling how and where rays where casted, visualising them with a pen and paper, to understand what was happening.
+I spend hours checking my code. I followed the debugger step by step, surveilling how and where rays were cast, visualising them with a pen and paper, to understand what was happening.
 
->If you are unfamiliar with [breakpoints](https://en.wikipedia.org/wiki/Breakpoint), they allow you to pause execution of a program at an instruction. Then you can check the [stack trace](https://en.wikipedia.org/wiki/Stack_trace) as well as variable values. 
+>If you are unfamiliar with [breakpoints](https://en.wikipedia.org/wiki/Breakpoint), they allow you to pause execution of a program at a chosen instruction. Then you can check the [stack trace](https://en.wikipedia.org/wiki/Stack_trace) as well as variable values. 
 >
->If you want to follow a ray on a specific material without stoping at each ray cast, put your [breakpoint](https://en.wikipedia.org/wiki/Breakpoint) on said material call (like its ```fn scatter()``` method) and then look at the [stack trace](https://en.wikipedia.org/wiki/Stack_trace), or progress step by step onward.
+>If you want to follow a ray on a specific material without stopping at each ray cast, put your [breakpoint](https://en.wikipedia.org/wiki/Breakpoint) on said material call (like its ```fn scatter()``` method) and then look at the [stack trace](https://en.wikipedia.org/wiki/Stack_trace), or progress step by step onward.
 
-Looking at the ray values and hit distances, I realised the first scattered ray would detect a hit at its origin. Then every succesive refraction would repeat the same mistake until depth reached its maximum. Hence the black final color.
+Looking at the ray values and hit distances, I realised the first scattered ray would detect a hit at its origin. Then every successive refraction would repeat the same mistake until depth reached its maximum. Hence the black final color.
 
-The issue came from an oversight in the sphere hit detection. While I did checked both roots for intersection, I created a new variable for the second root inside the first `if` statement which was then discarded. So if the second root was the right one, I still used the first one. 
+The issue came from an oversight in the sphere hit detection. While I did check both roots for intersection, I created a new variable for the second root inside the first `if` statement which was then discarded. So if the second root was the right one, I still used the first one. 
 
-That was a failed attempt at [shadowing](https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html#shadowing) on my part. Well at least I now know how it works. I hope so. 
+That was a failed attempt at [shadowing](https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html#shadowing) on my part. Well, at least I now know how it works. I hope so. 
 
 ```Rust
 let root = (-half_b - sqrtd) / a;           // Define root
