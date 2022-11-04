@@ -185,9 +185,11 @@ Implementing a metallic [material](./src/raytracer/hittable/material.rs) was une
 
 ### Dielectric implementation
 
+Implementing a dielectric [material](./src/raytracer/hittable/material.rs) proved to be challenging. Well, first I decided to provide an actual proof of the formulas used for computing the refracting ray. The second challenge came from a bug I spent hours searching.
+
 #### Refraction Vector Formulas Demonstration
 
-The [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html#dielectrics/snell'slaw) gives us formulas for computing $R^′$ without telling us how it works. Here I will try to demonstrate why they work.
+The [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html#dielectrics/snell'slaw) gives us formulas for computing $R^′$ without telling us how it works. *"You can go ahead and prove this for yourself if you want, but we will treat it as fact and move on."* Well, here I will try to prove it.
 
 We want to demonstrate: 
 
@@ -252,13 +254,52 @@ Because $|R^′\_{⊥}| = |T|sinθ^′ = sinθ^′$ since $T$ is of unit length:
 
 #### The refraction bug
 
-
+Dielectric too should be rather simple to implement by following the [book](). Alas, my old stealthy mistake surfaced in all its glory. Basically, while implementing refractions, I faced a bug which turned my glass ball black. 
 
 |![Refracting material show up as black](./renders/10_refraction_fail_s16d16.png)|
 |:--:|
-| Where is my refraction?|
+| Where is refraction?|
 
+I spend hours checking my code. I followed the debugger step by step, surveilling how and where rays where casted, visualising them with a pen and paper, to understand what was happening.
 
+>If you are unfamiliar with [breakpoints](https://en.wikipedia.org/wiki/Breakpoint), they allow you to pause execution of a program at an instruction. Then you can check the [stack trace](https://en.wikipedia.org/wiki/Stack_trace) as well as variable values. 
+>
+>If you want to follow a ray on a specific material without stoping at each ray cast, put your [breakpoint](https://en.wikipedia.org/wiki/Breakpoint) on said material call (like its ```fn scatter()``` method) and then look at the [stack trace](https://en.wikipedia.org/wiki/Stack_trace), or progress step by step onward.
+
+Looking at the ray values and hit distances, I realised the first scattered ray would detect a hit at its origin. Then every succesive refraction would repeat the same mistake until depth reached its maximum. Hence the black final color.
+
+The issue came from an oversight in the sphere hit detection. While I did checked both roots for intersection, I created a new variable for the second root inside the first `if` statement which was then discarded. So if the second root was the right one, I still used the first one. 
+
+That was a failed attempt at [shadowing](https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html#shadowing) on my part. Well at least I now know how it works. I hope so. 
+
+```Rust
+let root = (-half_b - sqrtd) / a;           // Define root
+if root < t_min || t_max < root {           
+    let root = (-half_b + sqrtd) / a;       // (INNER) Shadow the root
+    if root < t_min || t_max < root {
+        return false;
+    }
+}                                           // The second root goes out of scope
+                                            // The inner shadowing loose its effect
+```
+Once fixed it look like this:
+```Rust
+let mut root = (-half_b - sqrtd) / a;       // Define a mutable root
+if root < t_min || t_max < root {
+    root = (-half_b + sqrtd) / a;           // Store new root in mutable root
+    if root < t_min || t_max < root {
+        return false;
+    }
+}                                           // The second root is still in scope
+```
+
+|![Refraction sphere](./renders/12_refraction_success_s128d50.png)|![Refraction sphere](./renders/13_refraction_success_s128d50.png)|
+|:--:|:--:|
+|Refraction working as it should<br>(with fuzzy metal)|Refraction working as it should<br>(with less fuzzy metal)|
+
+|![Schlick approximation sphere](./renders/14_schlick_s128d50.png)|
+|:--:|
+|Schlick approximation|
 
 ## Multi-Threading with Rayon
 
