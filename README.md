@@ -192,6 +192,7 @@ The [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html#dielec
 We want to demonstrate: 
 
 $$R^′_{⊥}=\frac{η}{η′}⋅(R+cosθn)$$
+
 $$R^′_{∥}=−\sqrt{1−|R^′_{⊥}|^2}N$$
 
 |![Refracting material show up as black](./doc/refraction_graph.png)|
@@ -201,6 +202,7 @@ $$R^′_{∥}=−\sqrt{1−|R^′_{⊥}|^2}N$$
 We have $N$, $T$, $R$ and $R^′$ of unit length, with $T$ perpendicular to $N$. We also know that:
 
 $$R = R_{⊥}+R_{∥}$$
+
 $$R^′=R^′_{⊥}+R^′_{∥}$$
 
 $$sinθ^′=\frac{η}{η′}⋅sinθ$$
@@ -221,11 +223,15 @@ $$
 Therefor we can define $R^′_{⊥}$ based on $R_{⊥}$:
 
 $$R^′_{⊥} = Tsinθ^′$$
+
 $$R^′_{⊥} = \frac{η}{η′}⋅Tsinθ$$
+
 $$R^′_{⊥} = \frac{η}{η′}⋅R_{⊥}$$
 
 And since:
+
 $$R_{⊥} = R - R_{∥}$$
+
 $$R_{⊥} = R + Ncosθ$$
 
 We have: 
@@ -235,7 +241,9 @@ We have:
 Next we can express $R^′_{∥}$ using $R^′_{⊥}$ thanks to trygonometry $(cos^2θ + sin^2θ = 1)$:
 
 $$R^′_{∥} = -Ncosθ^′$$
+
 $$R^′_{∥} = -N⋅\sqrt{cos^2θ^′}$$
+
 $$R^′_{∥} = -N⋅\sqrt{(1 - sin^2θ^′)}$$
 
 Because $|R^′_{⊥}| = |T|sinθ^′ = sinθ^′$ since $T$ is of unit length:
