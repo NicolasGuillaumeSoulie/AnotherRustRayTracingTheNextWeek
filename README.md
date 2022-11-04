@@ -191,9 +191,9 @@ The [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html#dielec
 
 We want to demonstrate: 
 
-$$R^′_{⊥}=\frac{η}{η′}⋅(R+cosθn)$$
+$$R^′\_{⊥}=\frac{η}{η′}⋅(R+cosθn)$$
 
-$$R^′_{∥}=−\sqrt{1−|R^′_{⊥}|^2}N$$
+$$R^′\_{∥}=−\sqrt{1−|R^′\_{⊥}|^2}N$$
 
 |![Refracting material show up as black](./doc/refraction_graph.png)|
 |:--:|
@@ -201,54 +201,54 @@ $$R^′_{∥}=−\sqrt{1−|R^′_{⊥}|^2}N$$
 
 We have $N$, $T$, $R$ and $R^′$ of unit length, with $T$ perpendicular to $N$. We also know that:
 
-$$R = R_{⊥}+R_{∥}$$
+$$R = R\_{⊥}+R_{∥}$$
 
-$$R^′=R^′_{⊥}+R^′_{∥}$$
+$$R^′=R^′\_{⊥}+R^′\_{∥}$$
 
 $$sinθ^′=\frac{η}{η′}⋅sinθ$$
 
-With ${_{⊥}}$ and ${_{∥}}$ respectively indicating the vector is perpendicular/parallel to $N$ :
+With $\_{⊥}$ and $\_{∥}$ respectively indicating the vector is perpendicular/parallel to $N$ :
 
 $$
 \begin{cases}
-R_{⊥} = Tsinθ\\
-R_{∥} = -Ncosθ\\
+R\_{⊥} = Tsinθ\\
+R\_{∥} = -Ncosθ\\
 \end{cases}
 \begin{cases}
-R^′_{⊥} = Tsinθ^′\\
-R^′_{∥} = -Ncosθ^′\\
+R^′\_{⊥} = Tsinθ^′\\
+R^′\_{∥} = -Ncosθ^′\\
 \end{cases}
 $$
 
-Therefor we can define ${R^′_{⊥}}$ based on ${R_{⊥}}$:
+Therefor we can define ${R^′\_{⊥}}$ based on ${R\_{⊥}}$:
 
-$$R^′_{⊥} = Tsinθ^′$$
+$$R^′\_{⊥} = Tsinθ^′$$
 
-$$R^′_{⊥} = \frac{η}{η′}⋅Tsinθ$$
+$$R^′\_{⊥} = \frac{η}{η′}⋅Tsinθ$$
 
-$$R^′_{⊥} = \frac{η}{η′}⋅R_{⊥}$$
+$$R^′\_{⊥} = \frac{η}{η′}⋅R\_{⊥}$$
 
 And since:
 
-$$R_{⊥} = R - R_{∥}$$
+$$R\_{⊥} = R - R\_{∥}$$
 
-$$R_{⊥} = R + Ncosθ$$
+$$R\_{⊥} = R + Ncosθ$$
 
 We have: 
 
->$$R^′_{⊥} = \frac{η}{η′}⋅(R + Ncosθ)$$
+>$$R^′\_{⊥} = \frac{η}{η′}⋅(R + Ncosθ)$$
 
-Next we can express ${R^′_{∥}}$ using ${R^′_{⊥}}$ thanks to trygonometry $(cos^2θ + sin^2θ = 1)$:
+Next we can express $R^′\_{∥}$ using $R^′\_{⊥}$ thanks to trygonometry $(cos^2θ + sin^2θ = 1)$:
 
-$$R^′_{∥} = -Ncosθ^′$$
+$$R^′\_{∥} = -Ncosθ^′$$
 
-$$R^′_{∥} = -N⋅\sqrt{cos^2θ^′}$$
+$$R^′\_{∥} = -N⋅\sqrt{cos^2θ^′}$$
 
-$$R^′_{∥} = -N⋅\sqrt{(1 - sin^2θ^′)}$$
+$$R^′\_{∥} = -N⋅\sqrt{(1 - sin^2θ^′)}$$
 
-Because $|R^′_{⊥}| = |T|sinθ^′ = sinθ^′$ since $T$ is of unit length:
+Because $|R^′\_{⊥}| = |T|sinθ^′ = sinθ^′$ since $T$ is of unit length:
 
->$$R^′_{∥} = -N\sqrt{1 -|R^′_{⊥}|^2}$$
+>$$R^′\_{∥} = -N\sqrt{1 -|R^′\_{⊥}|^2}$$
 
 #### The refraction bug
 
