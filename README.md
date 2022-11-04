@@ -187,12 +187,12 @@ Implementing a metallic [material](./src/raytracer/hittable/material.rs) was une
 
 #### Refraction Vector Formulas Demonstration
 
-The [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html#dielectrics/snell'slaw) gives us formulas for computing $R$ without telling us how it works. Here I will try to demonstrate why they work.
+The [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html#dielectrics/snell'slaw) gives us formulas for computing $R^′$ without telling us how it works. Here I will try to demonstrate why they work.
 
 We want to demonstrate: 
 
->$$R^′_{⊥}=\frac{η}{η′}⋅(R+cosθn)$$
->$$R^′_{∥}=−\sqrt{1−|R^′_{⊥}|^2}N$$
+$$R^′_{⊥}=\frac{η}{η′}⋅(R+cosθn)$$
+$$R^′_{∥}=−\sqrt{1−|R^′_{⊥}|^2}N$$
 
 |![Refracting material show up as black](./doc/refraction_graph.png)|
 |:--:|
@@ -200,33 +200,33 @@ We want to demonstrate:
 
 We have $N$, $T$, $R$ and $R^′$ of unit length, with $T$ perpendicular to $N$. We also know that:
 
->$$R = R_{⊥}+R_{∥}$$
->$$R^′=R^′_{⊥}+R^′_{∥}$$
+$$R = R_{⊥}+R_{∥}$$
+$$R^′=R^′_{⊥}+R^′_{∥}$$
 
->$$sinθ^′=\frac{η}{η′}⋅sinθ$$
+$$sinθ^′=\frac{η}{η′}⋅sinθ$$
 
 With $_{⊥}$ and $_{∥}$ respectively indicating the vector is perpendicular/parallel to $N$ :
 
->$$
->\begin{cases}
->R_{⊥} = Tsinθ\\
->R_{∥} = -Ncosθ\\
->\end{cases}
->\begin{cases}
->R^′_{⊥} = Tsinθ^′\\
->R^′_{∥} = -Ncosθ^′\\
->\end{cases}
->$$
+$$
+\begin{cases}
+R_{⊥} = Tsinθ\\
+R_{∥} = -Ncosθ\\
+\end{cases}
+\begin{cases}
+R^′_{⊥} = Tsinθ^′\\
+R^′_{∥} = -Ncosθ^′\\
+\end{cases}
+$$
 
 Therefor we can define $R^′_{⊥}$ based on $R_{⊥}$:
 
->$$R^′_{⊥} = Tsinθ^′$$
->$$R^′_{⊥} = \frac{η}{η′}⋅Tsinθ$$
->$$R^′_{⊥} = \frac{η}{η′}⋅R_{⊥}$$
+$$R^′_{⊥} = Tsinθ^′$$
+$$R^′_{⊥} = \frac{η}{η′}⋅Tsinθ$$
+$$R^′_{⊥} = \frac{η}{η′}⋅R_{⊥}$$
 
 And since:
->$$R_{⊥} = R - R_{∥}$$
->$$R_{⊥} = R + Ncosθ$$
+$$R_{⊥} = R - R_{∥}$$
+$$R_{⊥} = R + Ncosθ$$
 
 We have: 
 
@@ -234,9 +234,9 @@ We have:
 
 Next we can express $R^′_{∥}$ using $R^′_{⊥}$ thanks to trygonometry $(cos^2θ + sin^2θ = 1)$:
 
->$$R^′_{∥} = -Ncosθ^′$$
->$$R^′_{∥} = -N⋅\sqrt{cos^2θ^′}$$
->$$R^′_{∥} = -N⋅\sqrt{(1 - sin^2θ^′)}$$
+$$R^′_{∥} = -Ncosθ^′$$
+$$R^′_{∥} = -N⋅\sqrt{cos^2θ^′}$$
+$$R^′_{∥} = -N⋅\sqrt{(1 - sin^2θ^′)}$$
 
 Because $|R^′_{⊥}| = |T|sinθ^′ = sinθ^′$ since $T$ is of unit length:
 
