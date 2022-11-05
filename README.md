@@ -341,8 +341,41 @@ So long as I learn new things I am satisfied, but I really should look into perf
 |:--:|
 |No changes in the result<br>Multithreading is working|
 
-## Fov distortion
+## FOV Distortion & Movable Camera
+
+|![FOV 50](./renders/16_fov_s16d16_fov50.png)|![FOV 120](./renders/17_fov_s16d16_fov120.png)|
+|:--:|:--:|
+|FOV 50|FOV 120|
+
+|![FOV 90](./renders/18_movable_camera_s128d50_fov90.png)|
+|:--:|
+|FOV 90|
+
+|![FOV 20](./renders/19_movable_camera_s128d50_fov20.png)|
+|:--:|
+|FOV 20|
+
+|![FOV 20](./renders/20_depth_of_field_s128d50_fov20_app0.5.png)|
+|:--:|
+|FOV 20, Apperture 0.5|
+
 
 ## Final render
+
+|Test Render|![Final Render test 1](./renders/21_final_render_s128d50_fov20_app0.1.png)|![Final Render test 2](./renders/22_final_render_s16d16_fov20_app0.1.png)|
+|:--:|:--:|:--:|
+|Resolution|720x405px|720x405px|
+|Samples| 128/px|16/px|
+|Depth| 50| 16|
+|FOV| 20| 20|
+|Apperture| 0.1| 0.1|
+
+|Fianl Render|![Final render](./renders/23_final_render_s512d64_fov20_app0.1.png)|
+|:--:|:--:|
+|Resolution|1920x1080px|
+|Samples| 512/px|
+|Depth| 64| 
+|FOV| 20| 
+|Apperture| 0.1| 
 
 ## Closing thoughts
