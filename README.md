@@ -30,7 +30,24 @@ What I am trying to say is instead of an efficient implementation expect some we
 
 # The journey
 
-## The first image (PPM)
+* [The first image](#ppm)
+* [Vec3 implementation (I should have use TDD)]()
+* [Hittable abstraction with Traits]()
+* [Utilities for Rust]()
+    * [Common Constants & Utility Functions]()
+    * [Some Random Number Utilities]()
+* [Materials through enums]()
+    * [Diffuse implementation]()
+    * [Metal implementation]()
+    * [Dielectric implementation]()
+        * [Refraction Vector Formulas Demonstration]()
+        * [The refraction bug]()
+* [Multithreading with Rayon]()
+* [FOV Distortion, Movable Camera & Blur]()
+* [Final render]()
+* [Closing thoughts]()
+
+## The first image (PPM){#ppm}
 
 The first step was to create an image. For simplicity, the [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html) uses the [PPM](https://en.wikipedia.org/wiki/Netpbm#PPM_example) format. As a text description of an image, it is indeed easy to manipulate.
 >The image renders were [PPM](https://en.wikipedia.org/wiki/Netpbm#PPM_example) files, but I converted them to PNG for display. You can find the renders [here (./render)](./renders/).
