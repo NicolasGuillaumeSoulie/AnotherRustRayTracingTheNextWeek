@@ -30,24 +30,24 @@ What I am trying to say is instead of an efficient implementation expect some we
 
 # The journey
 
-* [The first image](#ppm)
-* [Vec3 implementation (I should have use TDD)]()
-* [Hittable abstraction with Traits]()
-* [Utilities for Rust]()
-    * [Common Constants & Utility Functions]()
-    * [Some Random Number Utilities]()
-* [Materials through enums]()
-    * [Diffuse implementation]()
-    * [Metal implementation]()
-    * [Dielectric implementation]()
-        * [Refraction Vector Formulas Demonstration]()
-        * [The refraction bug]()
-* [Multithreading with Rayon]()
-* [FOV Distortion, Movable Camera & Blur]()
-* [Final render]()
-* [Closing thoughts]()
+* [The first image](#the-first-image-ppm)
+* [Vec3 implementation (I should have use TDD)](#vec3-implementation-i-should-have-use-tdd)
+* [Hittable abstraction with Traits](#hittable-abstraction-with-traits)
+* [Utilities for Rust](#utilities-for-rust)
+    * [Common Constants & Utility Functions](#common-constants--utility-functions)
+    * [Some Random Number Utilities](#some-random-number-utilities)
+* [Materials through enums](#materials-through-enums)
+    * [Diffuse implementation](#diffuse-implementation)
+    * [Metal implementation](#metal-implementation)
+    * [Dielectric implementation](#dielectric-implementation)
+        * [Refraction Vector Formulas Demonstration](#refraction-vector-formulas-demonstration)
+        * [The refraction bug](#the-refraction-bug)
+* [Multithreading with Rayon](#multithreading-with-rayon)
+* [FOV Distortion, Movable Camera & Blur](#fov-distortion-movable-camera--blur)
+* [Final render](#final-render)
+* [Closing thoughts](#closing-thoughts)
 
-## The first image (PPM){#ppm}
+## The first image (PPM)
 
 The first step was to create an image. For simplicity, the [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html) uses the [PPM](https://en.wikipedia.org/wiki/Netpbm#PPM_example) format. As a text description of an image, it is indeed easy to manipulate.
 >The image renders were [PPM](https://en.wikipedia.org/wiki/Netpbm#PPM_example) files, but I converted them to PNG for display. You can find the renders [here (./render)](./renders/).
