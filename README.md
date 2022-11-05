@@ -301,7 +301,45 @@ if root < t_min || t_max < root {
 |:--:|
 |Schlick approximation|
 
-## Multi-Threading with Rayon
+## Multithreading with Rayon
+
+The rendering loop in other Rust projects ([akinnane](https://github.com/akinnane/RayTracingInOneWeekend) and [Nelarius](https://github.com/Nelarius/weekend-raytracer-rust)) used an iterator in a way I never saw. 
+Doing a bit of research I learned that they used [rayon](https://docs.rs/rayon/latest/rayon/) for easy multithreading. 
+At that point, rendering started to slow down so I decided to try it myself. 
+While it is fairly simple to use, I still had to face a few difficulties.
+
+For an object to be passed around threads, it needs to implement the traits [Send](https://doc.rust-lang.org/std/marker/trait.Send.html) and [Sync](https://doc.rust-lang.org/std/marker/trait.Sync.html). 
+Those traits are automatically implemented when the compiler determines it’s appropriate. 
+
+>"Any type composed entirely of `Send` types is automatically marked as `Send` as well. Almost all primitive types are `Send`, aside from raw pointers".
+>
+>"Similar to `Send`, primitive types are `Sync`, and types composed entirely of types that are `Sync` are also `Sync`."
+>
+>[The Rust "book", *Extensible Concurrency with the Sync and Send Traits*](https://doc.rust-lang.org/book/ch16-04-extensible-concurrency-sync-and-send.html)
+
+Thanks to that, my `structs` already implements [Send](https://doc.rust-lang.org/std/marker/trait.Send.html) and [Sync](https://doc.rust-lang.org/std/marker/trait.Sync.html). 
+However, that is not the case for [dyn](https://doc.rust-lang.org/rust-by-example/trait/dyn.html?highlight=dyn#returning-traits-with-dyn) Hittable `structs`, whose true type is only known at runtime. 
+Therefor, I had to precise that I wanted my `structs` to implement [Send](https://doc.rust-lang.org/std/marker/trait.Send.html) and [Sync](https://doc.rust-lang.org/std/marker/trait.Sync.html) in my definitions. 
+I also changed my [Box](https://doc.rust-lang.org/book/ch15-01-box.html#enabling-recursive-types-with-boxes)  smart pointers to [Arc](https://doc.rust-lang.org/book/ch16-03-shared-state.html#atomic-reference-counting-with-arct).
+
+```Rust 
+// HittableList became a vec of smart pointers to Hittable, Send and Sync structs
+pub struct HittableList {
+    pub objects: Vec<Arc<dyn Hittable + Send + Sync>>,
+}
+
+// render now asks for Sync Hittable structs
+pub fn render(world: &(dyn Hittable + Sync), // ...
+    ) -> String;
+```
+
+I also used an [Arc](https://doc.rust-lang.org/book/ch16-03-shared-state.html#atomic-reference-counting-with-arct)<[Mutex](https://doc.rust-lang.org/book/ch16-03-shared-state.html#using-mutexes-to-allow-access-to-data-from-one-thread-at-a-time)> to track the progress of the render despite the chaotic nature of multithreading. 
+It probably slows down the process, but since I never really measured the render time I cannot judge the loss or gain of this whole implementation. 
+So long as I learn new things I am satisfied, but I really should look into performance measuring in the future.
+
+|![Multi-threading test](./renders/15_multithread_w_rayon_s128d50.png)|
+|:--:|
+|No changes in the result<br>Multithreading is working|
 
 ## Fov distortion
 
