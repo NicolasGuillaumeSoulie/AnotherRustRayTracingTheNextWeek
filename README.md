@@ -341,11 +341,26 @@ So long as I learn new things I am satisfied, but I really should look into perf
 |:--:|
 |No changes in the result<br>Multithreading is working|
 
-## FOV Distortion & Movable Camera
+## FOV Distortion, Movable Camera & Blur
+
+I don't have much to say about those last few steps. 
+I had no issue and the port from the [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html#positionablecamera) C++ implementation to Rust is too simple to involve another architecture choice.
 
 |![FOV 50](./renders/16_fov_s16d16_fov50.png)|![FOV 120](./renders/17_fov_s16d16_fov120.png)|
 |:--:|:--:|
 |FOV 50|FOV 120|
+
+However, I do find the distortion in high FOV a bit weird, especially in the 160 and further (I should have saved those...). 
+I believe it is due to the way we cast our rays from an origin to a plane using a constant distance in the `x` and `y` axis for pixels.
+Because of that we have smaller angular differences between neighboring pixels at the edges. 
+The higher the FOV the greater the angular step differ between the center and the borders.
+|![Projection plane](https://raytracing.github.io/images/fig-1.03-cam-geom.jpg)|
+|:--:|
+|[Ray Tracing in One Weekend, *"Figure 3: Camera geometry"*](https://raytracing.github.io/books/RayTracingInOneWeekend.html#rays,asimplecamera,andbackground/sendingraysintothescene)|
+
+
+Or maybe I am just not used to high FOV and a camera ray cast with constant angular step between nearby pixels might just look as weird.
+I should try it out, but for now I get results that match the [book](https://raytracing.github.io/books/RayTracingInOneWeekend.html#positionablecamera/cameraviewinggeometry) so I will keep plane projection.
 
 |![FOV 90](./renders/18_movable_camera_s128d50_fov90.png)|
 |:--:|
@@ -370,12 +385,17 @@ So long as I learn new things I am satisfied, but I really should look into perf
 |FOV| 20| 20|
 |Apperture| 0.1| 0.1|
 
-|Fianl Render|![Final render](./renders/23_final_render_s512d64_fov20_app0.1.png)|
+|Final Render|![Final render](./renders/23_final_render_s512d64_fov20_app0.1.png)|
 |:--:|:--:|
 |Resolution|1920x1080px|
 |Samples| 512/px|
 |Depth| 64| 
 |FOV| 20| 
 |Apperture| 0.1| 
+
+>The final render took approximately 5 hours to render with an `i7 4770k` (16Go of RAM). 
+>Thanks to [rayon](https://docs.rs/rayon/latest/rayon/), all 8 threads showed a 100% utilisation. 
+>
+>While other programs were running during the process, the rendering still used more than 90% of CPU utilisation.
 
 ## Closing thoughts
