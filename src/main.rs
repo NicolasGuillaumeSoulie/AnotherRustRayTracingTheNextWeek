@@ -25,13 +25,13 @@ fn main() -> std::io::Result<()> {
         lookat,
         Vec3::up(),
         16. / 9.,
-        1080,
+        240,
         20.,
         0.1,
         dist_to_focus,
     );
-    let samples_per_pixel = 512;
-    let max_depht = 64;
+    let samples_per_pixel = 128;
+    let max_depht = 16;
 
     let mat_ground = Lambertian::new(Color::new(0.5, 0.5, 0.4));
     let mat_lambertian = Lambertian::new(Color::new(0.8, 0.0, 0.8));
@@ -61,7 +61,7 @@ fn main() -> std::io::Result<()> {
     )));
 
     let mut file = File::create("img.ppm")?;
-    let content = cam.render(&world, samples_per_pixel, max_depht);
+    let content = cam.render(&world, samples_per_pixel, max_depht, (0.0..1.0));
     file.write_all(content.as_bytes())?;
     print!("\n### Rendering Done!! ###              ");
     Ok(())
@@ -82,8 +82,9 @@ fn random_scene() -> HittableList {
 
             match chose_mat {
                 // Diffuse
-                0..=79 => za_warudo.add(Arc::new(Sphere::new(
+                0..=79 => za_warudo.add(Arc::new(Sphere::new_moving(
                     center,
+                    Vec3::up() * rng.gen_range(0.0..0.5),
                     0.2,
                     Lambertian::new(
                         Color::rand(&mut rng, 0.0, 1.0) * Color::rand(&mut rng, 0.0, 1.0),

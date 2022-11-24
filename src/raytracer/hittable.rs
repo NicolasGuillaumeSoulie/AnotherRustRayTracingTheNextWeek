@@ -88,7 +88,7 @@ mod test {
 
         let origin = Point3::zeros();
         let direction = Vec3::new(1., 0., 0.);
-        let ray = Ray::new(origin, direction);
+        let ray = Ray::new(origin, direction, 0.0);
 
         let out_normal = Vec3::new(1., 0., 0.);
 

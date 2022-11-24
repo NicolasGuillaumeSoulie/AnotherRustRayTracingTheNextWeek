@@ -4,6 +4,7 @@ use crate::vec3::{Color, Point3, Vec3};
 use rand::rngs::ThreadRng;
 use rand::{thread_rng, Rng};
 use rayon::prelude::*;
+use std::ops::Range;
 use std::sync::{Arc, Mutex};
 
 pub struct Camera {
@@ -61,13 +62,14 @@ impl Camera {
             lens_radius,
         }
     }
-    pub fn get_ray(&self, u: f64, v: f64, rng: &mut ThreadRng) -> Ray {
+    pub fn get_ray(&self, u: f64, v: f64, rng: &mut ThreadRng, time_frame: &Range<f64>) -> Ray {
         let rd = self.lens_radius * Vec3::rand_in_disk(rng);
         let offset = self.u * rd.x + self.v * rd.y;
 
         Ray::new(
             self.origin + offset,
             self.lower_left_corner + u * self.horizontal + v * self.vertical - self.origin - offset,
+            rng.gen_range(time_frame.clone()),
         )
     }
     pub fn render(
@@ -75,6 +77,7 @@ impl Camera {
         za_warudo: &(dyn Hittable + Sync),
         samples_per_pixel: u16,
         max_depht: u16,
+        time_frame: Range<f64>,
     ) -> String {
         let mut render = Vec::new();
         render.push(format!("P3\n{} {}\n255", self.img_width, self.img_height));
@@ -111,7 +114,7 @@ impl Camera {
                         let u = (i as f64 + rng.gen_range(0.0..1.0)) / (self.img_width - 1) as f64;
                         let v = (j as f64 + rng.gen_range(0.0..1.0)) / (self.img_height - 1) as f64;
 
-                        let r = self.get_ray(u, v, rng);
+                        let r = self.get_ray(u, v, rng, &time_frame);
                         pixel_color += r.color(&mut rng, za_warudo, max_depht);
                     }
 

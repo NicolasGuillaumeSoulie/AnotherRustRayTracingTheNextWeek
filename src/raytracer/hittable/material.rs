@@ -21,7 +21,7 @@ impl Material {
         rng: &mut ThreadRng,
     ) -> Option<(Vec3, Ray)> {
         match self {
-            Material::Lambertian(l) => l.scatter(rec, rng),
+            Material::Lambertian(l) => l.scatter(r_in, rec, rng),
             Material::Metal(m) => m.scatter(r_in, rec, rng),
             Material::Dielectric(d) => d.scatter(r_in, rec, rng),
             _ => Option::None,
@@ -38,13 +38,13 @@ impl Lambertian {
     pub fn new(albedo: Color) -> Material {
         Material::Lambertian(Lambertian { albedo })
     }
-    fn scatter(&self, rec: &mut HitRecord, rng: &mut ThreadRng) -> Option<(Vec3, Ray)> {
+    fn scatter(&self, r_in: &Ray, rec: &mut HitRecord, rng: &mut ThreadRng) -> Option<(Vec3, Ray)> {
         let mut direction = rec.normal + Vec3::rand_unit(rng);
 
         if direction.near_zero() {
             direction = rec.normal;
         }
-        Option::Some((self.albedo, Ray::new(rec.p, direction)))
+        Option::Some((self.albedo, Ray::new(rec.p, direction, r_in.time)))
     }
 }
 
@@ -65,7 +65,7 @@ impl Metal {
         }
         Option::Some((
             self.albedo,
-            Ray::new(rec.p, reflected + self.fuzz * Vec3::rand_in_sphere(rng)),
+            Ray::new(rec.p, reflected + self.fuzz * Vec3::rand_in_sphere(rng), r_in.time),
         ))
     }
 }
@@ -95,10 +95,10 @@ impl Dielectric {
             || Self::reflectance(cos_theta, refraction_ratio) > rng.gen_range(0.0..1.0)
         {
             let reflect = direction_norm.reflect(rec.normal);
-            Option::Some((Color::ones(), Ray::new(rec.p, reflect)))
+            Option::Some((Color::ones(), Ray::new(rec.p, reflect, r_in.time)))
         } else {
             let refracted = direction_norm.refract(rec.normal, refraction_ratio);
-            Option::Some((Color::ones(), Ray::new(rec.p, refracted)))
+            Option::Some((Color::ones(), Ray::new(rec.p, refracted, r_in.time)))
         }
     }
     fn reflectance(cosine: f64, refraction_ratio: f64) -> f64 {
