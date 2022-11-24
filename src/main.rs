@@ -61,7 +61,7 @@ fn main() -> std::io::Result<()> {
     )));
 
     let mut file = File::create("img.ppm")?;
-    let content = cam.render(&world, samples_per_pixel, max_depht, (0.0..1.0));
+    let content = cam.render(&world, samples_per_pixel, max_depht, 0.0..1.0);
     file.write_all(content.as_bytes())?;
     print!("\n### Rendering Done!! ###              ");
     Ok(())
@@ -71,8 +71,8 @@ fn random_scene() -> HittableList {
     let mut za_warudo = HittableList::new();
     let mut rng = thread_rng();
 
-    for a in (-11..11) {
-        for b in (-11..11) {
+    for a in -11..11 {
+        for b in -11..11 {
             let chose_mat = rng.gen_range(0..100);
             let center = Point3 {
                 x: a as f64 + 0.9 * rng.gen_range(0.0..1.0),
