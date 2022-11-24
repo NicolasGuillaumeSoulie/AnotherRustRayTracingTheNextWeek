@@ -23,8 +23,12 @@ impl Ray {
         let mut rec = HitRecord::new();
         if za_warudo.hit(self, 0.001, f64::INFINITY, &mut rec) {
             let material = rec.material;
-            let (attenuation, new_ray) = material.scatter(self, &mut rec, rng);
-            return attenuation * new_ray.color(rng, za_warudo, depht - 1);
+            match material.scatter(self, &mut rec, rng) {
+                Option::Some((attenuation, new_ray)) => {
+                    return attenuation * new_ray.color(rng, za_warudo, depht - 1)
+                }
+                _ => return Color::zeros(),
+            }
         }
         // Background
         let norm_dir = self.direction.normalize();
