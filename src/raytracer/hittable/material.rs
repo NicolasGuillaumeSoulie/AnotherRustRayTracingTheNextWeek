@@ -65,7 +65,11 @@ impl Metal {
         }
         Option::Some((
             self.albedo,
-            Ray::new(rec.p, reflected + self.fuzz * Vec3::rand_in_sphere(rng), r_in.time),
+            Ray::new(
+                rec.p,
+                reflected + self.fuzz * Vec3::rand_in_sphere(rng),
+                r_in.time,
+            ),
         ))
     }
 }

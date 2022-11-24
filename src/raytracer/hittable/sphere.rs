@@ -1,5 +1,8 @@
 use super::{material::Material, HitRecord, Hittable};
-use crate::{raytracer::Ray, vec3::{Vec3, Point3}};
+use crate::{
+    raytracer::Ray,
+    vec3::{Point3, Vec3},
+};
 
 pub struct Sphere {
     center: Point3,
@@ -26,7 +29,7 @@ impl Sphere {
         }
     }
     pub fn center(&self, time: f64) -> Point3 {
-        self.center + time*self.speed
+        self.center + time * self.speed
     }
 }
 
