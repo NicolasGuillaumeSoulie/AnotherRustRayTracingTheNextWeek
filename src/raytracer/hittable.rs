@@ -1,3 +1,4 @@
+pub(crate) mod aabb;
 pub(crate) mod material;
 pub(crate) mod sphere;
 use crate::raytracer::Ray;
