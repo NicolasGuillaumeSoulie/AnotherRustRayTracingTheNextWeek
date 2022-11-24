@@ -1,4 +1,4 @@
-use super::{material::Material, HitRecord, Hittable};
+use super::{material::Material, HitRecord, Hittable, AABB};
 use crate::{
     raytracer::Ray,
     vec3::{Point3, Vec3},
@@ -53,21 +53,60 @@ impl Hittable for Sphere {
                 return false;
             }
         }
-
         rec.t = root;
         rec.p = r.at(rec.t);
         let out_normal = (rec.p - self.center(r.time)) / self.radius;
         rec.set_face_normal(r, out_normal);
         rec.material = self.material;
 
-        // let in_sphere = (r.origin - self.center).length() <= self.radius && (rec.p - self.center).length() <= self.radius;
-        // match self.material{
-        //     Material::Dielectric(d) => {
-        //         println!("In sphere : {}", in_sphere)
-        //     },
-        //     _ => (),
-        // }
-
         true
+    }
+
+    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<super::AABB> {
+        let box_a = AABB::new(
+            self.center(time_frame.0) - Vec3::new(self.radius, self.radius, self.radius),
+            self.center(time_frame.0) + Vec3::new(self.radius, self.radius, self.radius),
+        );
+
+        let box_b = AABB::new(
+            self.center(time_frame.1) - Vec3::new(self.radius, self.radius, self.radius),
+            self.center(time_frame.1) + Vec3::new(self.radius, self.radius, self.radius),
+        );
+
+        Option::Some(AABB::surronding_box(&box_a, &box_b))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Sphere;
+    use crate::{
+        raytracer::{
+            hittable::{material::Material, AABB},
+            Hittable,
+        },
+        vec3::Vec3,
+    };
+
+    #[test]
+    fn bounding_box() {
+        let sphere = Sphere::new(Vec3::zeros(), 1.0, Material::None);
+        let expected_bounding_box = AABB::new(-Vec3::ones(), Vec3::ones());
+
+        assert_eq!(
+            expected_bounding_box,
+            sphere.bounding_box((0.0, 0.0)).unwrap()
+        );
+    }
+
+    #[test]
+    fn bounding_box_moving() {
+        let sphere = Sphere::new_moving(Vec3::zeros(), Vec3::up(), 1.0, Material::None);
+        let expected_bounding_box = AABB::new(-Vec3::ones(), Vec3::ones() + Vec3::up());
+
+        assert_eq!(
+            expected_bounding_box,
+            sphere.bounding_box((0.0, 1.0)).unwrap()
+        );
     }
 }

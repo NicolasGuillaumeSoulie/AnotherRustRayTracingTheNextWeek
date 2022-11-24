@@ -1,12 +1,33 @@
+use super::{HitRecord, Hittable};
 use crate::raytracer::Ray;
 use crate::vec3::Point3;
 
-use super::{HitRecord, Hittable};
-
 // Axis-Aligned Bounding Box
-struct AABB {
+#[derive(Debug, PartialEq)]
+pub struct AABB {
     minimum: Point3,
     maximum: Point3,
+}
+
+impl AABB {
+    pub fn new(minimum: Point3, maximum: Point3) -> Self {
+        AABB { minimum, maximum }
+    }
+    pub fn surronding_box(box_a: &AABB, box_b: &AABB) -> AABB {
+        let minimum = Point3::new(
+            box_a.minimum.x.min(box_b.minimum.x),
+            box_a.minimum.y.min(box_b.minimum.y),
+            box_a.minimum.z.min(box_b.minimum.z),
+        );
+
+        let maximum = Point3::new(
+            box_a.maximum.x.max(box_b.maximum.x),
+            box_a.maximum.y.max(box_b.maximum.y),
+            box_a.maximum.z.max(box_b.maximum.z),
+        );
+
+        AABB { minimum, maximum }
+    }
 }
 
 impl Hittable for AABB {
@@ -27,6 +48,10 @@ impl Hittable for AABB {
             }
         }
         true
+    }
+
+    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<AABB> {
+        todo!()
     }
 }
 

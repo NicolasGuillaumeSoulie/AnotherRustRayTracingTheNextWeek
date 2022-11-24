@@ -3,6 +3,7 @@ pub(crate) mod material;
 pub(crate) mod sphere;
 use crate::raytracer::Ray;
 use crate::vec3::{Point3, Vec3};
+pub use aabb::AABB;
 use material::Material;
 pub use sphere::Sphere;
 use std::sync::Arc;
@@ -10,6 +11,7 @@ use std::vec::Vec;
 
 pub trait Hittable {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64, rec: &mut HitRecord) -> bool;
+    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<AABB>;
 }
 
 pub struct HitRecord {
@@ -73,11 +75,30 @@ impl Hittable for HittableList {
         }
         hit_any
     }
+    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<AABB> {
+        if self.objects.is_empty() {
+            return Option::None;
+        }
+
+        let mut output_box: AABB = self.objects[0].bounding_box(time_frame).unwrap();
+
+        for obj in &self.objects[1..] {
+            if let Some(temp_box) = obj.bounding_box(time_frame) {
+                output_box = AABB::surronding_box(&temp_box, &output_box);
+            } else {
+                return None;
+            }
+        }
+
+        Option::Some(output_box)
+    }
 }
 
 #[cfg(test)]
 mod test {
-    use super::HitRecord;
+    use std::sync::Arc;
+
+    use super::{HitRecord, Hittable, HittableList, Sphere, AABB};
     use crate::{
         raytracer::Ray,
         vec3::{Point3, Vec3},
@@ -100,5 +121,33 @@ mod test {
         rec.set_face_normal(&ray, -out_normal);
         assert!(rec.front_face);
         assert_eq!(rec.normal, -out_normal);
+    }
+
+    #[test]
+    fn hittable_list_empty_bounding_box() {
+        let list = HittableList::new();
+        assert_eq!(None, list.bounding_box((0.0, 0.0)))
+    }
+
+    #[test]
+    fn hittable_list_bounding_box() {
+        let mut list = HittableList::new();
+        list.add(Arc::new(Sphere::new(
+            Vec3::zeros(),
+            1.0,
+            super::material::Material::None,
+        )));
+        list.add(Arc::new(Sphere::new(
+            Vec3::up(),
+            1.5,
+            super::material::Material::None,
+        )));
+
+        let expected_bounding_box =
+            AABB::new(Point3::new(-1.5, -1., -1.5), Point3::new(1.5, 2.5, 1.5));
+        assert_eq!(
+            expected_bounding_box,
+            list.bounding_box((0.0, 0.0)).unwrap()
+        );
     }
 }
