@@ -9,3 +9,6 @@ As I said, this is my implementation of [Peter Shirley](https://github.com/peter
 
 - [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) (first of [three books](https://github.com/RayTracing/raytracing.github.io)) 
 - [Ray Tracing the Next Week](https://raytracing.github.io/books/RayTracingInOneWeekend.html) (second of [three books](https://github.com/RayTracing/raytracing.github.io))
+- My previous project: [Another Rust Ray Tracing In One Weekend](https://github.com/NicolasGuillaumeSoulie/AnotherRustRayTracingInOneWeekend.git)
+- [akinnane's Rust implementation](https://github.com/akinnane/RayTracingInOneWeekend)
+- [Nelarius' Rust implementation](https://github.com/Nelarius/weekend-raytracer-rust)
