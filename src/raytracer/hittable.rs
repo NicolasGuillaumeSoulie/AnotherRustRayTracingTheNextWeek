@@ -1,9 +1,10 @@
 pub(crate) mod aabb;
+pub(crate) mod bvh;
 pub(crate) mod material;
 pub(crate) mod sphere;
 use crate::raytracer::Ray;
 use crate::vec3::{Point3, Vec3};
-pub use aabb::AABB;
+pub use aabb::Aabb;
 use material::Material;
 pub use sphere::Sphere;
 use std::sync::Arc;
@@ -11,7 +12,7 @@ use std::vec::Vec;
 
 pub trait Hittable {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64, rec: &mut HitRecord) -> bool;
-    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<AABB>;
+    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<Aabb>;
 }
 
 pub struct HitRecord {
@@ -75,16 +76,16 @@ impl Hittable for HittableList {
         }
         hit_any
     }
-    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<AABB> {
+    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<Aabb> {
         if self.objects.is_empty() {
             return Option::None;
         }
 
-        let mut output_box: AABB = self.objects[0].bounding_box(time_frame).unwrap();
+        let mut output_box: Aabb = self.objects[0].bounding_box(time_frame).unwrap();
 
         for obj in &self.objects[1..] {
             if let Some(temp_box) = obj.bounding_box(time_frame) {
-                output_box = AABB::surronding_box(&temp_box, &output_box);
+                output_box = Aabb::surronding_box(&temp_box, &output_box);
             } else {
                 return None;
             }
@@ -98,9 +99,9 @@ impl Hittable for HittableList {
 mod test {
     use std::sync::Arc;
 
-    use super::{HitRecord, Hittable, HittableList, Sphere, AABB};
+    use super::{HitRecord, Hittable, HittableList, Sphere};
     use crate::{
-        raytracer::Ray,
+        raytracer::{Ray, hittable::Aabb},
         vec3::{Point3, Vec3},
     };
 
@@ -144,7 +145,7 @@ mod test {
         )));
 
         let expected_bounding_box =
-            AABB::new(Point3::new(-1.5, -1., -1.5), Point3::new(1.5, 2.5, 1.5));
+        Aabb::new(Point3::new(-1.5, -1., -1.5), Point3::new(1.5, 2.5, 1.5));
         assert_eq!(
             expected_bounding_box,
             list.bounding_box((0.0, 0.0)).unwrap()

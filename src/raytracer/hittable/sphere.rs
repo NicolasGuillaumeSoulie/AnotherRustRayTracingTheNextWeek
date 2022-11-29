@@ -1,4 +1,4 @@
-use super::{material::Material, HitRecord, Hittable, AABB};
+use super::{aabb::Aabb, material::Material, HitRecord, Hittable};
 use crate::{
     raytracer::Ray,
     vec3::{Point3, Vec3},
@@ -62,18 +62,18 @@ impl Hittable for Sphere {
         true
     }
 
-    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<super::AABB> {
-        let box_a = AABB::new(
+    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<super::Aabb> {
+        let box_a = Aabb::new(
             self.center(time_frame.0) - Vec3::new(self.radius, self.radius, self.radius),
             self.center(time_frame.0) + Vec3::new(self.radius, self.radius, self.radius),
         );
 
-        let box_b = AABB::new(
+        let box_b = Aabb::new(
             self.center(time_frame.1) - Vec3::new(self.radius, self.radius, self.radius),
             self.center(time_frame.1) + Vec3::new(self.radius, self.radius, self.radius),
         );
 
-        Option::Some(AABB::surronding_box(&box_a, &box_b))
+        Option::Some(Aabb::surronding_box(&box_a, &box_b))
     }
 }
 
@@ -82,7 +82,7 @@ mod tests {
     use super::Sphere;
     use crate::{
         raytracer::{
-            hittable::{material::Material, AABB},
+            hittable::{aabb::Aabb, material::Material},
             Hittable,
         },
         vec3::Vec3,
@@ -91,7 +91,7 @@ mod tests {
     #[test]
     fn bounding_box() {
         let sphere = Sphere::new(Vec3::zeros(), 1.0, Material::None);
-        let expected_bounding_box = AABB::new(-Vec3::ones(), Vec3::ones());
+        let expected_bounding_box = Aabb::new(-Vec3::ones(), Vec3::ones());
 
         assert_eq!(
             expected_bounding_box,
@@ -102,7 +102,7 @@ mod tests {
     #[test]
     fn bounding_box_moving() {
         let sphere = Sphere::new_moving(Vec3::zeros(), Vec3::up(), 1.0, Material::None);
-        let expected_bounding_box = AABB::new(-Vec3::ones(), Vec3::ones() + Vec3::up());
+        let expected_bounding_box = Aabb::new(-Vec3::ones(), Vec3::ones() + Vec3::up());
 
         assert_eq!(
             expected_bounding_box,

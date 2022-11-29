@@ -1,19 +1,20 @@
 use super::{HitRecord, Hittable};
 use crate::raytracer::Ray;
 use crate::vec3::Point3;
+use std::sync::Arc;
 
 // Axis-Aligned Bounding Box
-#[derive(Debug, PartialEq)]
-pub struct AABB {
-    minimum: Point3,
-    maximum: Point3,
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct Aabb {
+    pub minimum: Point3,
+    pub maximum: Point3,
 }
 
-impl AABB {
+impl Aabb {
     pub fn new(minimum: Point3, maximum: Point3) -> Self {
-        AABB { minimum, maximum }
+        Aabb { minimum, maximum }
     }
-    pub fn surronding_box(box_a: &AABB, box_b: &AABB) -> AABB {
+    pub fn surronding_box(box_a: &Aabb, box_b: &Aabb) -> Aabb {
         let minimum = Point3::new(
             box_a.minimum.x.min(box_b.minimum.x),
             box_a.minimum.y.min(box_b.minimum.y),
@@ -26,11 +27,11 @@ impl AABB {
             box_a.maximum.z.max(box_b.maximum.z),
         );
 
-        AABB { minimum, maximum }
+        Aabb { minimum, maximum }
     }
 }
 
-impl Hittable for AABB {
+impl Hittable for Aabb {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64, _rec: &mut HitRecord) -> bool {
         let mut t_min = t_min;
         let mut t_max = t_max;
@@ -50,14 +51,14 @@ impl Hittable for AABB {
         true
     }
 
-    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<AABB> {
+    fn bounding_box(&self, time_frame: (f64, f64)) -> Option<Self> {
         todo!()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::AABB;
+    use super::Aabb;
     use crate::{
         raytracer::{HitRecord, Hittable, Ray},
         vec3::Point3,
@@ -65,7 +66,7 @@ mod tests {
 
     #[test]
     fn hit_me() {
-        let aabb = AABB {
+        let aabb = Aabb {
             minimum: Point3::new(1., 1., 1.),
             maximum: Point3::new(2., 2., 2.),
         };

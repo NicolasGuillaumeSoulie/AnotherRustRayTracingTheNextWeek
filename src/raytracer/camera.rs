@@ -106,7 +106,7 @@ impl Camera {
             .into_par_iter()
             .map_init(
                 || thread_rng(),
-                |mut rng, screen_pos| {
+                | rng, screen_pos| {
                     let mut pixel_color = Color::zeros();
                     let i = screen_pos % self.img_width;
                     let j = self.img_height - 1 - screen_pos / self.img_width;
@@ -115,7 +115,7 @@ impl Camera {
                         let v = (j as f64 + rng.gen_range(0.0..1.0)) / (self.img_height - 1) as f64;
 
                         let r = self.get_ray(u, v, rng, &time_frame);
-                        pixel_color += r.color(&mut rng, za_warudo, max_depht);
+                        pixel_color += r.color(rng, za_warudo, max_depht);
                     }
 
                     {
