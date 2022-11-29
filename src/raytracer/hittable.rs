@@ -101,7 +101,7 @@ mod test {
 
     use super::{HitRecord, Hittable, HittableList, Sphere};
     use crate::{
-        raytracer::{Ray, hittable::Aabb},
+        raytracer::{hittable::Aabb, Ray},
         vec3::{Point3, Vec3},
     };
 
@@ -145,7 +145,7 @@ mod test {
         )));
 
         let expected_bounding_box =
-        Aabb::new(Point3::new(-1.5, -1., -1.5), Point3::new(1.5, 2.5, 1.5));
+            Aabb::new(Point3::new(-1.5, -1., -1.5), Point3::new(1.5, 2.5, 1.5));
         assert_eq!(
             expected_bounding_box,
             list.bounding_box((0.0, 0.0)).unwrap()

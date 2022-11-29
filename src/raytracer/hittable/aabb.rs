@@ -1,7 +1,6 @@
 use super::{HitRecord, Hittable};
 use crate::raytracer::Ray;
 use crate::vec3::Point3;
-use std::sync::Arc;
 
 // Axis-Aligned Bounding Box
 #[derive(Debug, PartialEq, Clone, Copy)]

@@ -1,4 +1,4 @@
-use super::{aabb::Aabb, HitRecord, Hittable, HittableList};
+use super::{aabb::Aabb, HitRecord, Hittable};
 use crate::raytracer::Ray;
 use rand::{rngs::ThreadRng, Rng};
 use std::{cmp::Ordering, sync::Arc};
@@ -38,16 +38,14 @@ impl BvhNode {
 
         // let (left, right) =
         match object_span {
-            1 => {
-                return BvhNode {
-                    right: list[0].clone(),
-                    left: list[0].clone(),
-                    bounding_box: Aabb::surronding_box(
-                        &list[0].bounding_box(*time_frame).unwrap(),
-                        &list[0].bounding_box(*time_frame).unwrap(),
-                    ),
-                }
-            }
+            1 => BvhNode {
+                right: list[0].clone(),
+                left: list[0].clone(),
+                bounding_box: Aabb::surronding_box(
+                    &list[0].bounding_box(*time_frame).unwrap(),
+                    &list[0].bounding_box(*time_frame).unwrap(),
+                ),
+            },
             // 2 => match Aabb::axis_compare(&list[start], &list[start + 1], axis) {
             //     Ok(true) => (&list[start], &list[start + 1]),
             //     Ok(false) => (&list[start + 1], &list[start]),
@@ -68,17 +66,15 @@ impl BvhNode {
 
                 let left = Arc::new(BvhNode::new(&list, rng, start, mid, time_frame));
                 let right = Arc::new(BvhNode::new(&list, rng, mid, end, time_frame));
-                return BvhNode {
+                BvhNode {
                     bounding_box: Aabb::surronding_box(
                         &left.bounding_box(*time_frame).unwrap(),
                         &right.bounding_box(*time_frame).unwrap(),
                     ),
                     left,
                     right,
-                };
+                }
             }
-        };
-
-        todo!()
+        }
     }
 }

@@ -104,35 +104,32 @@ impl Camera {
 
         let image: String = (0..self.img_width * self.img_height)
             .into_par_iter()
-            .map_init(
-                || thread_rng(),
-                | rng, screen_pos| {
-                    let mut pixel_color = Color::zeros();
-                    let i = screen_pos % self.img_width;
-                    let j = self.img_height - 1 - screen_pos / self.img_width;
-                    for _ in 0..samples_per_pixel {
-                        let u = (i as f64 + rng.gen_range(0.0..1.0)) / (self.img_width - 1) as f64;
-                        let v = (j as f64 + rng.gen_range(0.0..1.0)) / (self.img_height - 1) as f64;
+            .map_init(thread_rng, |rng, screen_pos| {
+                let mut pixel_color = Color::zeros();
+                let i = screen_pos % self.img_width;
+                let j = self.img_height - 1 - screen_pos / self.img_width;
+                for _ in 0..samples_per_pixel {
+                    let u = (i as f64 + rng.gen_range(0.0..1.0)) / (self.img_width - 1) as f64;
+                    let v = (j as f64 + rng.gen_range(0.0..1.0)) / (self.img_height - 1) as f64;
 
-                        let r = self.get_ray(u, v, rng, &time_frame);
-                        pixel_color += r.color(rng, za_warudo, max_depht);
-                    }
+                    let r = self.get_ray(u, v, rng, &time_frame);
+                    pixel_color += r.color(rng, za_warudo, max_depht);
+                }
 
-                    {
-                        // Display progress
-                        let mut lock = done.lock().unwrap();
-                        *lock += 1;
-                        print!(
-                            "\rPixels done: {:>10}/{:<10} = {:>6.2}%",
-                            *lock,
-                            self.img_width * self.img_height,
-                            (*lock as f64 / (self.img_width * self.img_height) as f64) * 100.0
-                        );
-                    }
+                {
+                    // Display progress
+                    let mut lock = done.lock().unwrap();
+                    *lock += 1;
+                    print!(
+                        "\rPixels done: {:>10}/{:<10} = {:>6.2}%",
+                        *lock,
+                        self.img_width * self.img_height,
+                        (*lock as f64 / (self.img_width * self.img_height) as f64) * 100.0
+                    );
+                }
 
-                    pixel_color.write(samples_per_pixel) + "\n"
-                },
-            )
+                pixel_color.write(samples_per_pixel) + "\n"
+            })
             .collect::<String>();
 
         render.push(image);
